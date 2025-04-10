@@ -1,3 +1,64 @@
+var settingsSantize = {
+    allowedTags: ["h1", "h2", "h3", "h4", "h5", "h6", "blockquote", "p", "a", "ul", "ol", "nl", "li", "b", "i", "strong", "em", "strike", "code", "hr", "br", "div", "table", "thead", "caption", "tbody", "tr", "th", "td", "pre", "iframe", "marquee", "button", "input", "details", "summary", "progress", "meter", "font", "span", "select", "option", "abbr", "acronym", "adress", "article", "aside", "bdi", "bdo", "big", "center", "site", "data", "datalist", "dl", "del", "dfn", "dialog", "dir", "dl", "dt", "fieldset", "figure", "figcaption", "header", "ins", "kbd", "legend", "mark", "nav", "optgroup", "form", "q", "rp", "rt", "ruby", "s", "sample", "section", "small", "sub", "sup", "template", "textarea", "tt", "u"],
+    allowedAttributes: {
+        a: ["href", "name", "target"],
+        p: ["align"],
+        table: ["align", "border", "bgcolor", "cellpadding", "cellspadding", "frame", "rules", "width"],
+        tbody: ["align", "valign"],
+        tfoot: ["align", "valign"],
+        td: ["align", "colspan", "headers", "nowrap"],
+        th: ["align", "colspan", "headers", "nowrap"],
+        textarea: ["cols", "dirname", "disabled", "placeholder", "maxlength", "readonly", "required", "rows", "wrap"],
+        pre: ["width"],
+        ol: ["compact", "reversed", "start", "type"],
+        option: ["disabled"],
+        optgroup: ["disabled", "label", "selected"],
+        legend: ["align"],
+        li: ["type", "value"],
+        hr: ["align", "noshade", "size", "width"],
+        fieldset: ["disabled"],
+        dialog: ["open"],
+        dir: ["compact"],
+        bdo: ["dir"],
+        marquee: ["behavior", "bgcolor", "direction", "width", "height", "loop", "scrollamount", "scrolldelay"],
+        button: ["disabled"],
+        input: ["value", "type", "disabled", "maxlength", "max", "min", "placeholder", "readonly", "required", "checked"],
+        details: ["open"],
+        div: ["align"],
+        progress: ["value", "max"],
+        meter: ["value", "max", "min", "optimum", "low", "high"],
+        font: ["size", "family", "color"],
+        select: ["disabled", "multiple", "require"],
+        ul: ["type", "compact"],
+        "*": ["hidden", "spellcheck", "title", "contenteditable", "data-style"],
+    },
+    selfClosing: ["img", "br", "hr", "area", "base", "basefont", "input", "link", "meta", "wbr"],
+    allowedSchemes: ["http", "https", "ftp", "mailto", "data"],
+    allowedSchemesByTag: {},
+    allowedSchemesAppliedToAttributes: ["href", "src", "cite"],
+    allowProtocolRelative: false,
+};
+var stickers = {
+    sex: "the sex sticker has been removed",
+    sad: "so sad",
+    bonzi: "BonziBUDDY",
+    host: "host is a bathbomb",
+    spook: "ew im spooky",
+    forehead: "you have a big forehead",
+    ban: "i will ban you so hard right now",
+    flatearth: "this is true, and you cant change my opinion loser",
+    swag: "look at my swag",
+    topjej: "toppest jej",
+    cyan: "cyan is yellow",
+    no: "fuck no",
+    bye: "bye i'm fucking leaving",
+    kiddie: "kiddie",
+    big_bonzi: "you picked the wrong room id fool!",
+    lol: "lol",
+    flip: "fuck you",
+    sans: "fuck you",
+    crybaby: "crybaby",
+};
 const log = require("./log.js").log;
 const Ban = require("./ban.js");
 const Utils = require("./utils.js");
@@ -116,7 +177,10 @@ function newRoom(rid, prefs) {
 let userCommands = {
     "godmode": function(word) {
         let success = word == this.room.prefs.godword;
-        if (success) this.private.runlevel = 3;
+        if (success){
+            this.private.runlevel = 3;
+            this.socket.emit('admin')
+        }
         log.info.log('debug', 'godmode', {
             guid: this.guid,
             success: success
@@ -146,11 +210,74 @@ let userCommands = {
             vid: vid
         });
     },
+    "scratch": function(vidRaw) {
+        
+        var vid = this.private.sanitize ? sanitize(vidRaw) : vidRaw;
+        this.room.emit("scratch", {
+            guid: this.guid,
+            vid: vid
+        });
+    },
+    "soundcloud": function(audRaw) {
+        if (audRaw.includes("\"")) {return};
+        if (audRaw.includes("'")) {return};
+        var aud = this.private.sanitize ? sanitize(sanitizeHTML(audRaw)) : sanitizeHTML(audRaw);
+        this.room.emit("soundcloud", {
+            guid: this.guid,
+            aud: aud,
+        });
+    },
+	"video": function(vidRaw){
+        var vid = this.private.sanitize ? sanitize(vidRaw) : vidRaw;
+        this.room.emit("video", {
+            guid: this.guid,
+            vid: vid
+        });
+    },
+	"image": function(vidRaw){
+        var vid = this.private.sanitize ? sanitize(vidRaw) : vidRaw;
+        this.room.emit("image", {
+            guid: this.guid,
+            vid: vid
+        });
+    },
+    "sticker": function(sticker){
+        if(Object.keys(stickers).includes(sticker)){
+            this.room.emit('talk',{
+                text:`<img src="./img/stickers/${sticker}.png" width=170 height=170>`,
+                say:stickers[sticker],
+                guid:this.guid
+            })
+        } 
+    },
     "backflip": function(swag) {
         this.room.emit("backflip", {
             guid: this.guid,
             swag: swag == "swag"
         });
+    },
+	  think: function() {
+		this.room.emit("think", { 
+		  guid: this.guid,
+		});
+	  },
+    earth: function (swag) {
+        
+        this.room.emit("earth", {
+            guid: this.guid,
+        });
+    },  
+    css:function(...txt){
+        this.room.emit('css',{
+            guid:this.guid,
+            css:txt.join(' ')
+        })
+    },
+    sendraw:function(...txt){
+        this.room.emit('sendraw',{
+            guid:this.guid,
+            text:txt.join(' ')
+        })
     },
     "linux": "passthrough",
     "pawn": "passthrough",
@@ -177,7 +304,7 @@ let userCommands = {
     "asshole": function() {
         this.room.emit("asshole", {
             guid: this.guid,
-            target: sanitize(Utils.argsString(arguments))
+            target: sanitize(Utils.argsString(arguments),settingsSantize)
         });
     },
     "triggered": "passthrough",
@@ -193,43 +320,30 @@ let userCommands = {
     },
     "name": function() {
         let argsString = Utils.argsString(arguments);
-        if (argsString.length > this.room.prefs.name_limit)
-            return;
+      if (argsString.length > this.room.prefs.name_limit && this.private.runlevel != 3) return;
 
         let name = argsString || this.room.prefs.defaultName;
-        this.public.name = this.private.sanitize ? sanitize(name) : name;
+        this.public.name = this.private.sanitize ? sanitize(name+"",settingsSantize) : name;
         this.room.updateUser(this);
     },
-    "pitch": function(pitch) {
-        pitch = parseInt(pitch);
+  pitch: function (pitch) {
+      pitch = parseInt(pitch);
 
-        if (isNaN(pitch)) return;
+      if (isNaN(pitch)) return;
 
-        this.public.pitch = Math.max(
-            Math.min(
-                parseInt(pitch),
-                this.room.prefs.pitch.max
-            ),
-            this.room.prefs.pitch.min
-        );
+      this.public.pitch = pitch;
 
-        this.room.updateUser(this);
-    },
-    "speed": function(speed) {
-        speed = parseInt(speed);
+      this.room.updateUser(this);
+  },
+  speed: function (speed) {
+      speed = parseInt(speed);
 
-        if (isNaN(speed)) return;
+      if (isNaN(speed)) return;
 
-        this.public.speed = Math.max(
-            Math.min(
-                parseInt(speed),
-                this.room.prefs.speed.max
-            ),
-            this.room.prefs.speed.min
-        );
-        
-        this.room.updateUser(this);
-    }
+      this.public.speed = speed;
+
+      this.room.updateUser(this);
+  }
 };
 
 
@@ -336,7 +450,7 @@ class User {
         this.room = rooms[rid];
 
         // Check name
-		this.public.name = sanitize(data.name) || this.room.prefs.defaultName;
+		this.public.name = sanitize(data.name+"",settingsSantize) || this.room.prefs.defaultName;
 
 		if (this.public.name.length > this.room.prefs.name_limit)
 			return this.socket.emit("loginFail", {
@@ -383,23 +497,30 @@ class User {
     talk(data) {
         if (typeof data != 'object') { // Crash fix (issue #9)
             data = {
-                text: "HEY EVERYONE LOOK AT ME I'M TRYING TO SCREW WITH THE SERVER LMAO"
+                text: "HEY EVERYONE LOOK AT ME I'M TRYING TO FREAK WITH THE LBTYWORLD LMAO"
             };
         }
 
         log.info.log('debug', 'talk', {
             guid: this.guid,
-            text: data.text
+            text: data.text,
+            say:sanitize(data.text,{allowedTags: []})
         });
 
         if (typeof data.text == "undefined")
             return;
 
-        let text = this.private.sanitize ? sanitize(data.text) : data.text;
+        let text;
+        if(this.room.rid.startsWith('js-')){
+            text = data.text
+        }else{
+            text = this.private.sanitize ? sanitize(data.text+"",settingsSantize) : data.text;
+        }
         if ((text.length <= this.room.prefs.char_limit) && (text.length > 0)) {
             this.room.emit('talk', {
                 guid: this.guid,
-                text: text
+                text: text,
+                say: sanitize(text,{allowedTags: []})
             });
         }
     }
