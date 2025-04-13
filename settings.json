@@ -36,7 +36,7 @@
 			        "scratch": 0,
 			        "think": 0,
 				"pope": 3,
-				 "god": 3
+				 "god": 3,
 			},
 			"room_max": 8,
 			"owner": null,
@@ -142,7 +142,10 @@
 		"winxp",
 		"losky",
 		"chibiette",
-		"spongebob"
+		"spongebob",
+		"mametchi",
+		"jabba",
+		"droyd"
 	],
 	"banLength": 1440,
 	"port": 3000,
