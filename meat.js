@@ -311,6 +311,30 @@ let userCommands = {
             target: sanitize(Utils.argsString(arguments),settingsSantize)
         });
     },
+    "baragon": function() {
+        this.room.emit("baragon", {
+            guid: this.guid,
+            target: sanitize(Utils.argsString(arguments),settingsSantize)
+        });
+    },
+    "owo": function() {
+        this.room.emit("owo", {
+            guid: this.guid,
+            target: sanitize(Utils.argsString(arguments),settingsSantize)
+        });
+    },
+    "uwu": function() {
+        this.room.emit("uwu", {
+            guid: this.guid,
+            target: sanitize(Utils.argsString(arguments),settingsSantize)
+        });
+    },
+    "beggar": function() {
+        this.room.emit("beggar", {
+            guid: this.guid,
+            target: sanitize(Utils.argsString(arguments),settingsSantize)
+        });
+    },
     "triggered": "passthrough",
     "vaporwave": function() {
         this.socket.emit("vaporwave");
