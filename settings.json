@@ -35,7 +35,8 @@
                                 "soundcloud": 0,
 			        "scratch": 0,
 			        "think": 0,
-				"pope": 3
+				"pope": 3,
+				 "god": 3
 			},
 			"room_max": 8,
 			"owner": null,
@@ -87,7 +88,8 @@
 																"soundcloud": 0,
 							"scratch": 0,
 							"think": 0,
-				"pope": 3
+				"pope": 3,
+								 "god": 3
 			},
 						"room_max": 30,
 			"owner": null,
@@ -139,7 +141,8 @@
 		"vibri",
 		"winxp",
 		"losky",
-		"chibiette"
+		"chibiette",
+		"spongebob"
 	],
 	"banLength": 1440,
 	"port": 3000,
