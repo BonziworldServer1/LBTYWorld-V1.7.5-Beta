@@ -31,7 +31,10 @@
 					"unvaporwave": 0,
 					"name": 0,
 					"owo": 0,
-					"sanitize": 3,
+			 "beggar": 3,
+				 "uwu": 3,
+			 "baragon": 3,
+"sanitize": 3,
                                 "soundcloud": 0,
 			        "scratch": 0,
 			        "think": 0,
@@ -89,6 +92,9 @@
 							"scratch": 0,
 							"think": 0,
 				"pope": 3,
+					 "beggar": 3,
+				 "uwu": 3,
+			 "baragon": 3,
 								 "god": 3
 			},
 						"room_max": 30,
@@ -142,7 +148,10 @@
 		"winxp",
 		"losky",
 		"chibiette",
-		"spongebob"
+		"spongebob",
+		"mametchi",
+		"jabba",
+		"droyd"
 	],
 	"banLength": 1440,
 	"port": 3000,
