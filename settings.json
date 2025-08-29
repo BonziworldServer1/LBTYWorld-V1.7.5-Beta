@@ -6,6 +6,7 @@
 			"godword": null,
 			"runlevel": {
 				"godmode": 0,
+				        "kick": 3,
 					"youtube": 0,
 					"joke": 0,
 					"fact": 0,
